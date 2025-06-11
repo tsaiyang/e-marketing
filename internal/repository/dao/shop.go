@@ -7,11 +7,25 @@ import (
 )
 
 type ShopDAO interface {
-	FindUninstalledByAppAndDays(ctx context.Context, appName string, days int) ([]Shop, error)
+	FindByEmails(ctx context.Context, appName string, emails []string) ([]Shop, error)
 }
 
 type gormShopDAO struct {
 	db *gorm.DB
+}
+
+func (dao *gormShopDAO) FindByEmails(ctx context.Context,
+	appName string, emails []string) (shops []Shop, err error) {
+	err = dao.db.WithContext(ctx).
+		Where("app = ? AND email in (?)", appName, emails).
+		Find(&shops).
+		Error
+
+	return
+}
+
+func NewShopDAO(db *gorm.DB) ShopDAO {
+	return &gormShopDAO{db: db}
 }
 
 type Shop struct {
