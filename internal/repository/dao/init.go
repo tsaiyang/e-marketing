@@ -12,5 +12,10 @@ func InitTables(db *gorm.DB) error {
 		&SenderStrategy{},
 		&SenderDailyStat{},
 		&Shop{},
+		&ThresholdNotification{},
+		&Scenario{},
+		&TriggerRule{},
+		&SendingFrequency{},
+		&ScenarioTemplate{},
 	)
 }

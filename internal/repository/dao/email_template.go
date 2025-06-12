@@ -13,8 +13,7 @@ type EmailTemplate struct {
 	// 变量列表，JSON格式
 	Variables map[string]string `gorm:"type:json;comment:'变量列表如 {\"name\":\"姓名\",\"company\":\"公司\"}'"`
 	// 状态：1启用 0禁用
-	Status uint8 `gorm:"type:tinyint;default:1;comment:'1:启用 0:禁用'"`
-	// 时间戳
+	Status   uint8 `gorm:"type:tinyint;default:1;comment:'1:启用 0:禁用'"`
 	CreateAt int64
 	UpdateAt int64
 }

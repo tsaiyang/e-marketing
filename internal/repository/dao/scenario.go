@@ -1,11 +1,31 @@
 package dao
 
 import (
+	"context"
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+
+	"gorm.io/gorm"
 )
 
+type ScenarioDAO interface {
+	GetScenarioByCode(ctx context.Context, code string) (*Scenario, error)
+	GetTriggerRuleByScenarioId(ctx context.Context, sid int64) (TriggerRule, error)
+	GetFrequencyByScenarioId(ctx context.Context, sid int64) (SendingFrequency, error)
+}
+
+type gormScenarioDAO struct {
+	db *gorm.DB
+}
+
+func NewScenarioDAO(db *gorm.DB) ScenarioDAO {
+	return &gormScenarioDAO{
+		db: db,
+	}
+}
+
+// 场景
 type Scenario struct {
 	Id        int64  `gorm:"primaryKey;autoIncrement"`
 	Code      string `gorm:"type:varchar(50);uniqueIndex;not null"`
@@ -16,6 +36,7 @@ type Scenario struct {
 	UpdatedAt int64
 }
 
+// 触发规则
 type TriggerRule struct {
 	Id          int64  `gorm:"primaryKey;autoIncrement"`
 	ScenarioId  int64  `gorm:"index:idx_trigger_scenario"`
