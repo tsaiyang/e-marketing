@@ -25,7 +25,7 @@ type EmailLog struct {
 type ThresholdNotification struct {
 	Id         int64 `gorm:"primaryKey,autoIncrement"`
 	EmailLogId int64
-	App        string `gorm:"type:varchar(50);index:app_threshold"`
-	Threshold  int    `gorm:"index:app_threshold"`
+	App        string `gorm:"type:varchar(50);index:app_number"`
+	Number     int    `gorm:"index:app_number"`
 	CreateAt   int64
 }

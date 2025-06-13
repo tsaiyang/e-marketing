@@ -46,5 +46,20 @@ func (job *NotInstalledJob) Run() error {
 		return err
 	}
 
+	scenario, err := job.emailService.GetScenarioByCode(ctx, model.ScenarioCodeNotInstalled)
+	if err != nil {
+		return err
+	}
+
+	triggerRule, err := job.emailService.GetTriggerRuleByScenarioId(ctx, scenario.Id)
+	if err != nil {
+		return err
+	}
+
+	days := triggerRule.Params["days"].([]int)
+	for _, day := range days {
+
+	}
+
 	return nil
 }

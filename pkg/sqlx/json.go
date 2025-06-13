@@ -3,6 +3,7 @@ package sqlx
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -50,4 +51,19 @@ func (j *JSONColumn[T]) Scan(src any) error {
 	}
 	j.Valid = true
 	return nil
+}
+
+// JSON类型处理
+type JSON map[string]any
+
+func (j JSON) Value() (driver.Value, error) {
+	return json.Marshal(j)
+}
+
+func (j *JSON) Scan(value any) error {
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(bytes, &j)
 }

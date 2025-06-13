@@ -51,3 +51,58 @@ const (
 	ScenarioCodeUpdateCallback       ScenarioCode = "update_callback"
 	ScenarioCodeReconnected          ScenarioCode = "reconnected"
 )
+
+type Scenario struct {
+	Id        int64
+	App       string
+	Code      ScenarioCode
+	Name      string
+	Objective string
+	IsActive  bool
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type TriggerRuleType string
+
+const (
+	TriggerRuleTypeNotInstalled           TriggerRuleType = "rule_type_not_installed"
+	TriggerRuleTypeInstalledSucceed       TriggerRuleType = "installed_succeed"
+	TriggerRuleTypeNotConfigured          TriggerRuleType = "not_configured"
+	TriggerRuleTypeFreeUserFrequently     TriggerRuleType = "free_user_frequently"
+	TriggerRuleTypeNoActionAfterInstalled TriggerRuleType = "no_action_after_installed"
+	TriggerRuleTypeBeyondActionCount      TriggerRuleType = "beyond_action_count"
+	TriggerRuleTypeDealDone               TriggerRuleType = "deal_done"
+	TriggerRuleTypeUninstalled            TriggerRuleType = "uninstalled"
+	TriggerRuleTypeNoReinstalledAfterDays TriggerRuleType = "no_reinstalled_after_days"
+	TriggerRuleTypeUpdateCallback         TriggerRuleType = "update_callback"
+)
+
+type TriggerRule struct {
+	Id         int64
+	ScenarioId int64
+	Type       TriggerRuleType
+	Params     map[string]any
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
+
+type SendingFrequencyType string
+
+const (
+	SendingFrequencyTypeOneTime        SendingFrequencyType = "one_time"
+	SendingFrequencyTypeInterval       SendingFrequencyType = "interval"
+	SendingFrequencyTypeDaysAfterEvent SendingFrequencyType = "days_after_event"
+	SendingFrequencyTypeRepeat         SendingFrequencyType = "repeat"
+	SendingFrequencyTypeOnClick        SendingFrequencyType = "on_click"
+	SendingFrequencyTypeOnSettlement   SendingFrequencyType = "on_settlement"
+)
+
+type SendingFrequency struct {
+	Id         int64
+	ScenarioId int64
+	Type       SendingFrequencyType
+	Params     map[string]any
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
