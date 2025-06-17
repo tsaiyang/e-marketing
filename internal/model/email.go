@@ -106,3 +106,23 @@ type SendingFrequency struct {
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
+
+type Recipient struct {
+	Id       int64
+	Email    string
+	Name     string
+	Company  string
+	Position string
+	Attrs    map[string]any
+	Status   RecipientStatus
+	UpdateAt time.Time
+	CreateAt time.Time
+}
+
+type RecipientStatus uint8
+
+const (
+	RecipientStatusNormal RecipientStatus = iota + 1
+	RecipientStatusUnsubscribed
+	RecipientStatusBlacklist
+)

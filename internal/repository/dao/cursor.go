@@ -8,7 +8,7 @@ import (
 )
 
 type CursorDAO interface {
-	Set(ctx context.Context, name string, offset int64) error
+	Incr(ctx context.Context, name string, num int) error
 	Get(ctx context.Context, name string) (int64, error)
 }
 
@@ -23,15 +23,15 @@ func (dao *gormCursorDAO) Get(ctx context.Context, name string) (int64, error) {
 	return cursor.Offset, err
 }
 
-func (dao *gormCursorDAO) Set(ctx context.Context, name string, offset int64) error {
+func (dao *gormCursorDAO) Incr(ctx context.Context, name string, num int) error {
 	return dao.db.WithContext(ctx).Clauses(clause.OnConflict{
 		Columns: []clause.Column{{Name: "name"}},
 		DoUpdates: clause.Assignments(map[string]any{
-			"offset": offset,
+			"offset": gorm.Expr("`offset` + ?", num),
 		}),
 	}).Create(&Cursor{
 		Name:   name,
-		Offset: offset,
+		Offset: int64(num),
 	}).Error
 }
 

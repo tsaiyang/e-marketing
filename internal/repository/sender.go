@@ -10,10 +10,15 @@ import (
 type SenderRepo interface {
 	GetSenderListByPurpose(ctx context.Context, purpose model.SenderPurpose) ([]model.Sender, error)
 	GetEmailCountAndLimitTheDay(ctx context.Context, sid int64) (int, int, error)
+	IncrCountStatTheDay(ctx context.Context, sid int64, count int) error
 }
 
 type senderRepo struct {
 	senderDAO dao.SenderDAO
+}
+
+func (repo *senderRepo) IncrCountStatTheDay(ctx context.Context, sid int64, count int) error {
+	return repo.senderDAO.IncrCountStatTheDay(ctx, sid, count)
 }
 
 func (repo *senderRepo) GetEmailCountAndLimitTheDay(ctx context.Context, sid int64) (int, int, error) {

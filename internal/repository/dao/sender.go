@@ -5,15 +5,33 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type SenderDAO interface {
 	GetSenderListByPurpose(ctx context.Context, purpose string) ([]Sender, error)
 	GetEmailCountAndLimitTheDay(ctx context.Context, sid int64) (int, int, error)
+	IncrCountStatTheDay(ctx context.Context, sid int64, count int) error
 }
 
 type gormSenderDAO struct {
 	db *gorm.DB
+}
+
+func (dao *gormSenderDAO) IncrCountStatTheDay(ctx context.Context, sid int64, count int) error {
+	now := time.Now()
+	date := now.Format("2006-01-02")
+
+	return dao.db.WithContext(ctx).Clauses(clause.OnConflict{
+		Columns: []clause.Column{{Name: "sender_id"}, {Name: "date"}},
+		DoUpdates: clause.Assignments(map[string]any{
+			"count": gorm.Expr("`count` + ?", count),
+		}),
+	}).Create(&SenderDailyStat{
+		SenderId: sid,
+		Date:     date,
+		Count:    count,
+	}).Error
 }
 
 func (dao *gormSenderDAO) GetEmailCountAndLimitTheDay(ctx context.Context, sid int64) (int, int, error) {
@@ -44,7 +62,7 @@ func (dao *gormSenderDAO) GetEmailCountAndLimitTheDay(ctx context.Context, sid i
 	createTime := time.UnixMilli(sender.CreateAt)
 	daysSinceCreation := int(now.Sub(createTime).Hours() / 24)
 
-	// 计算当前是第几周（从 1 开始）
+	// 计算当前是第几周（从 1 开始）,第 10 周以后都按第 10 周的算
 	weekNumber := min(daysSinceCreation/7+1, 10)
 
 	// strategy 和 senderStrategy 联合查询，根据 week 和 senderId 查询DailyLimited

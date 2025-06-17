@@ -6,7 +6,7 @@ import (
 )
 
 type CursorRepo interface {
-	Set(ctx context.Context, name string, offset int64) error
+	Incr(ctx context.Context, name string, num int) error
 	Get(ctx context.Context, name string) (int64, error)
 }
 
@@ -18,8 +18,8 @@ func (repo *cursorRepo) Get(ctx context.Context, name string) (int64, error) {
 	return repo.cursorDAO.Get(ctx, name)
 }
 
-func (repo *cursorRepo) Set(ctx context.Context, name string, offset int64) error {
-	return repo.cursorDAO.Set(ctx, name, offset)
+func (repo *cursorRepo) Incr(ctx context.Context, name string, num int) error {
+	return repo.cursorDAO.Incr(ctx, name, num)
 }
 
 func NewCursorRepo(cursorDAO dao.CursorDAO) CursorRepo {
