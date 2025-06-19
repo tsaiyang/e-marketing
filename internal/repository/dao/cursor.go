@@ -43,6 +43,6 @@ func NewCursorDAO(db *gorm.DB) CursorDAO {
 
 type Cursor struct {
 	Id     int64  `gorm:"primaryKey,autoIncrement"`
-	Name   string `gorm:"type:varchar(10);uniqueIndex"`
+	Name   string `gorm:"type:varchar(50);uniqueIndex"`
 	Offset int64
 }

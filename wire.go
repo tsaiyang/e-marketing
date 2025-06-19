@@ -1,7 +1,10 @@
+//go:build wireinject
+
 package main
 
 import (
 	"e-marketing/internal/ioc"
+	"e-marketing/internal/job"
 	"e-marketing/internal/repository"
 	"e-marketing/internal/repository/dao"
 	"e-marketing/internal/service"
@@ -13,6 +16,7 @@ func InitApp() *App {
 	wire.Build(
 		// third-party
 		ioc.InitSendgrid,
+		ioc.InitDB,
 
 		// dao 部分
 		dao.NewCursorDAO,
@@ -34,6 +38,11 @@ func InitApp() *App {
 		service.NewEmailSendService,
 
 		// job 部分
+		ioc.InitJobs,
+		job.NewUninstalledJob,
+
+		// server
+		ioc.InitWebServer,
 
 		wire.Struct(new(App), "*"),
 	)

@@ -17,5 +17,7 @@ func InitTables(db *gorm.DB) error {
 		&TriggerRule{},
 		&SendingFrequency{},
 		&ScenarioTemplate{},
+		&Campaign{},
+		&Cursor{},
 	)
 }

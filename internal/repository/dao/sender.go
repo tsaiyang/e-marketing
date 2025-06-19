@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -40,12 +41,12 @@ func (dao *gormSenderDAO) GetEmailCountAndLimitTheDay(ctx context.Context, sid i
 	date := now.Format("2006-01-02")
 
 	// 查询当天发送数量
-	var count int64
+	var stat SenderDailyStat
 	if err := dao.db.WithContext(ctx).
 		Model(&SenderDailyStat{}).
 		Where("sender_id = ? AND date = ?", sid, date).
-		Count(&count).
-		Error; err != nil {
+		First(&stat).
+		Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return 0, 0, err
 	}
 
@@ -62,8 +63,8 @@ func (dao *gormSenderDAO) GetEmailCountAndLimitTheDay(ctx context.Context, sid i
 	createTime := time.UnixMilli(sender.CreateAt)
 	daysSinceCreation := int(now.Sub(createTime).Hours() / 24)
 
-	// 计算当前是第几周（从 1 开始）,第 10 周以后都按第 10 周的算
-	weekNumber := min(daysSinceCreation/7+1, 10)
+	// 计算当前是第几周（从 1 开始）,第 8 周以后都按第 8 周的算
+	weekNumber := min(daysSinceCreation/7+1, 8)
 
 	// strategy 和 senderStrategy 联合查询，根据 week 和 senderId 查询DailyLimited
 	var strategy Strategy
@@ -76,7 +77,7 @@ func (dao *gormSenderDAO) GetEmailCountAndLimitTheDay(ctx context.Context, sid i
 	}
 
 	// 返回当天已发送数量和当日的限制数量
-	return int(count), strategy.DailyLimited, nil
+	return int(stat.Count), strategy.DailyLimited, nil
 }
 
 func (dao *gormSenderDAO) GetSenderListByPurpose(ctx context.Context,

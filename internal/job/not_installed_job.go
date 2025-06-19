@@ -60,7 +60,12 @@ func (job *NotInstalledJob) Run() error {
 		return err
 	}
 
-	days := triggerRule.Params["days"].([]int)
+	res := triggerRule.Params["days"].([]any)
+	days := make([]int, 0, len(res))
+	for _, day := range res {
+		days = append(days, int(day.(float64)))
+	}
+
 	sended := make([]bool, len(senders))
 	for _, day := range days {
 		for i, sender := range senders {
